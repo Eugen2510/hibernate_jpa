@@ -6,15 +6,14 @@
 
     <persistence-unit name="residential_complex">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-
-        <!--        <class>org.practice.Book</class> &lt;!&ndash; Указать свой класс сущности &ndash;&gt;-->
-        <!--        <class>org.practice.Author</class>-->
+        <!--                <class>org.example.Book</class> &lt;!&ndash; Указать свой класс сущности &ndash;&gt;-->
+        <!--                <class>org.example.Author</class>-->
 
         <properties>
-            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/residential_complex"/>
-            <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="myPassword123"/>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/> <!-- Используемый JDBC-драйвер -->
+            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/residential_complex"/>
+            <property name="jakarta.persistence.jdbc.user" value="root"/>
+            <property name="jakarta.persistence.jdbc.password" value="myPassword123"/>
+            <property name="jakarta.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/> <!-- Используемый JDBC-драйвер -->
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
         </properties>

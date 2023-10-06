@@ -17,7 +17,7 @@ public class Building {
 
     private String address;
 
-    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "building", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     private List<Flat> flats;
 
     @Override

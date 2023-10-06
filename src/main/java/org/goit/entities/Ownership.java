@@ -7,12 +7,12 @@ import lombok.Data;
 @Entity
 public class Ownership {
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     private Person person;
 
     @Id
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "flat_id", referencedColumnName = "id")
     private Flat flat;
 

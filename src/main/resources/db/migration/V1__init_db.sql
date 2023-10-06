@@ -30,6 +30,6 @@ CREATE TABLE IF NOT EXISTS ownership (
 flat_id INT,
 person_id INT,
 PRIMARY KEY(flat_id, person_id),
-FOREIGN KEY (person_id) REFERENCES person(id),
+FOREIGN KEY (person_id) REFERENCES person(id) ,
 FOREIGN KEY (flat_id) REFERENCES flat(id)
 );

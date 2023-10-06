@@ -12,7 +12,7 @@ public class Flat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
 
@@ -28,8 +28,11 @@ public class Flat {
     @Column(name = "num_of_rooms")
     private int numOfRooms;
 
-    @OneToMany(mappedBy = "residentialFlat")
+    @OneToMany(mappedBy = "residentialFlat", cascade = CascadeType.REMOVE)
     List<Person> persons;
+
+    @OneToMany(mappedBy = "flat", cascade = CascadeType.REMOVE)
+    private List<Ownership> ownerships;
 
     @Override
     public String toString() {

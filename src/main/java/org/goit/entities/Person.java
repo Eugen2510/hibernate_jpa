@@ -28,10 +28,10 @@ public class Person {
     @Column(name = "parking_right")
     private int parkingRight;
 
-    @OneToMany(mappedBy = "person")
+    @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
     private List<Ownership> ownerships;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "residential_flat", referencedColumnName = "id")
     private Flat residentialFlat;
 
