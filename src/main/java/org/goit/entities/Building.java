@@ -12,7 +12,7 @@ public class Building {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "num_of_flat")
+    @Column(name = "num_of_flats")
     private int numOfFlats;
 
     private String address;

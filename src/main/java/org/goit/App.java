@@ -7,10 +7,12 @@ import jakarta.persistence.TypedQuery;
 import org.goit.connection_properties.PathConstants;
 import org.goit.entities.Building;
 import org.goit.entities.Flat;
-import org.goit.entities.Owner;
+import org.goit.entities.Ownership;
+import org.goit.entities.Person;
 import org.goit.flyway.MigrationExecutor;
 
 import java.util.List;
+
 
 /**
  * Hello world!
@@ -32,33 +34,24 @@ public class App
             List<Flat> flats = building.getFlats();
             for (Flat flat : flats) {
                 System.out.println(flat);
+                List<Person> people = flat.getPersons();
+                for (Person person : people) {
+                    System.out.println(person);
+                }
             }
             System.out.println();
         }
 
-//        TypedQuery<Person> query1 = manager.createQuery("SELECT r FROM Person r", Person.class);
-//        List<Person> people = query1.getResultList();
-//        for (Person person : people) {
-//            System.out.println(person);
-//        }
-//
-        System.out.println('\n');
-        TypedQuery<Owner> query2 = manager.createQuery("SELECT o FROM Owner o", Owner.class);
-        List<Owner> owners = query2.getResultList();
-        for (Owner owner : owners) {
-            System.out.println(owner);
-            List<Flat> flats = owner.getFlats();
-            for (Flat flat : flats) {
-                System.out.println(flat);
+        TypedQuery<Person> query1 = manager.createQuery("SELECT p FROM Person p", Person.class);
+        List<Person> people = query1.getResultList();
+        for (Person person : people) {
+            System.out.println(person);
+            List<Ownership> ownerships = person.getOwnerships();
+            for (Ownership ownership : ownerships) {
+                System.out.println(ownership);
             }
+            System.out.println();
         }
-//
-//        TypedQuery<Flat> query3 = manager.createQuery("SELECT f FROM Flat f", Flat.class);
-//        List<Flat> flats = query3.getResultList();
-//        for (Flat flat : flats) {
-//            System.out.println(flat);
-//        }
-
 
         factory.close();
         manager.close();

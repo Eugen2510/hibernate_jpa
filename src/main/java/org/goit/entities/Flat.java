@@ -3,6 +3,8 @@ package org.goit.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 public class Flat {
@@ -13,26 +15,31 @@ public class Flat {
     @ManyToOne
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
+
     @Column(name = "apartment_number")
     private int apartmentNumber;
+
+    @Column(name = "area")
     private int area;
+
+    @Column(name ="floor")
     private int floor;
+
     @Column(name = "num_of_rooms")
     private int numOfRooms;
-    @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id")
-    private Owner owner;
+
+    @OneToMany(mappedBy = "residentialFlat")
+    List<Person> persons;
 
     @Override
     public String toString() {
         return "Flat{" +
                 "id=" + id +
-                ", buildingId=" + building.getId() +
+                ", building=" + building +
                 ", apartmentNumber=" + apartmentNumber +
                 ", area=" + area +
                 ", floor=" + floor +
                 ", numOfRooms=" + numOfRooms +
-                ", ownerId=" + owner.getId() +
                 '}';
     }
 }

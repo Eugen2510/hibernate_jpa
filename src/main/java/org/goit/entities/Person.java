@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
+import java.util.List;
+
+
 @Data
 @Entity
 public class Person {
@@ -13,13 +16,34 @@ public class Person {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "email")
     private String email;
+
+    @Column(name = "phone")
     private String phone;
+
     @Column(name = "parking_right")
     private int parkingRight;
-    @Column(name = "is_owner")
-    private int isOwner;
-    @Column(name = "is_resident")
-    private int isResident;
+
+    @OneToMany(mappedBy = "person")
+    private List<Ownership> ownerships;
+
+    @ManyToOne
+    @JoinColumn(name = "residential_flat", referencedColumnName = "id")
+    private Flat residentialFlat;
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", parkingRight=" + parkingRight +
+                ", residentialFlatId=" + residentialFlat.getId() +
+                '}';
+    }
 }
