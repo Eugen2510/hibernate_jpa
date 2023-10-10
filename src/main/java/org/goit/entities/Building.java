@@ -10,7 +10,7 @@ import java.util.List;
 public class Building implements MarkEntities{
 
     @Transient
-    private final static String sqlQuery = "SELECT b FROM Building b";
+    private static final String sqlQuery = "SELECT b FROM Building b";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

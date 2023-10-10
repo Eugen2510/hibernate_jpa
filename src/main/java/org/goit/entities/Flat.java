@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
 public class Flat implements MarkEntities{
 
     @Transient
-    private final static String sqlQuery = "SELECT f FROM Flat f";
+    private static final String sqlQuery = "SELECT f FROM Flat f";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -77,8 +77,8 @@ public class Flat implements MarkEntities{
     @Override
     public void delete(EntityManager manager, int id) {
         Flat flatToRemove = findById(manager, id);
-        List<Person> persons = flatToRemove.getPersons();
-        for (Person person : persons) {
+        List<Person> residents = flatToRemove.getPersons();
+        for (Person person : residents) {
             person.setResidentialFlat(null);
         }
         EntityTransaction transaction = manager.getTransaction();

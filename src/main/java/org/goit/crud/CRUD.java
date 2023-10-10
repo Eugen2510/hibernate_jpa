@@ -21,10 +21,11 @@ public class CRUD {
     }
 
     public <T extends MarkEntities> void createEntity(T... entities) {
-        EntityManager manager = factory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
 
-        try {
+        EntityTransaction transaction = null;
+
+        try (EntityManager manager = factory.createEntityManager()){
+            transaction = manager.getTransaction();
             transaction.begin();
 
             for (T entity : entities) {
@@ -37,8 +38,6 @@ public class CRUD {
                 transaction.rollback();
             }
             e.printStackTrace();
-        } finally {
-            manager.close();
         }
     }
 
@@ -54,14 +53,16 @@ public class CRUD {
     public <T extends MarkEntities> MarkEntities getEntityById(T entity, int id){
         EntityManager manager = factory.createEntityManager();
         MarkEntities byId = entity.findById(manager, id);
+        manager.close();
         return byId;
     }
 
 
     public <T extends MarkEntities>  void updateEntity(T entity, int id){
-        EntityManager manager = factory.createEntityManager();
-        EntityTransaction transaction = manager.getTransaction();
-        try {
+
+        EntityTransaction transaction = null;
+        try (EntityManager manager = factory.createEntityManager()) {
+            transaction = manager.getTransaction();
             MarkEntities byId = entity.findById(manager, id);
             byId.clone(entity);
             transaction.begin();
@@ -72,8 +73,6 @@ public class CRUD {
                 transaction.rollback();
             }
             e.printStackTrace();
-        }finally {
-            manager.close();
         }
     }
 
@@ -88,11 +87,6 @@ public class CRUD {
         CriteriaQuery<Integer> criteriaQuery = builder.createQuery(Integer.class);
 
         Root<Ownership> root = criteriaQuery.from(Ownership.class);
-
-//        criteriaQuery.select(residentRoot.get("personId").get("id"))
-//                .groupBy(residentRoot.get("personId"))
-//                .having(criteriaBuilder.gt(criteriaBuilder.count(residentRoot.get("apartmentId")), 1));
-
 
         criteriaQuery.select(
                         root.get("person").get("id"))
@@ -126,90 +120,3 @@ public class CRUD {
 
 }
 
-/*
-public static List<Integer> readIdsOfPeopleWithMultipleApartments(EntityManager entityManager) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Integer> criteriaQuery = criteriaBuilder.createQuery(Integer.class);
-        Root<Resident> residentRoot = criteriaQuery.from(Resident.class);
-
-        criteriaQuery.select(residentRoot.get("personId").get("id"))
-                .groupBy(residentRoot.get("personId"))
-                .having(criteriaBuilder.gt(criteriaBuilder.count(residentRoot.get("apartmentId")), 1));
-
-        TypedQuery<Integer> query = entityManager.createQuery(criteriaQuery);
-
-        return query.getResultList();
-
-
-        public static List<Resident> readResidentsWithoutCarEntryPermission(EntityManager entityManager) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Resident> criteriaQuery = criteriaBuilder.createQuery(Resident.class);
-        Root<Resident> residentRoot = criteriaQuery.from(Resident.class);
-
-        criteriaQuery.select(residentRoot);
-
-        Predicate predicate = criteriaBuilder.equal(residentRoot.get("carEntryPermission"), false);
-        criteriaQuery.where(predicate);
-
-        TypedQuery<Resident> query = entityManager.createQuery(criteriaQuery);
-
-        return query.getResultList();
-    }
-}
-
-
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
-import java.util.List;
-
-public class CheckIfElementsExist {
-    public static void main(String[] args) {
-        // Create an EntityManagerFactory
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("YourPersistenceUnitName");
-
-        // Create an EntityManager
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
-
-        try {
-            // List of flat IDs to check
-            List<Integer> flatIds = new ArrayList<>();
-            flatIds.add(1);  // Add flat IDs to the list
-
-            // Get the CriteriaBuilder
-            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-
-            // Create a CriteriaQuery for Flat
-            CriteriaQuery<Flat> criteriaQuery = criteriaBuilder.createQuery(Flat.class);
-            Root<Flat> root = criteriaQuery.from(Flat.class);
-
-            // Create an "in" predicate to check if id is in the list
-            Predicate idPredicate = root.get("id").in(flatIds);
-
-            // Add the predicate to the criteria query
-            criteriaQuery.where(idPredicate);
-
-            // Execute the criteria query and get the result list
-            List<Flat> matchingFlats = entityManager.createQuery(criteriaQuery).getResultList();
-
-            // Check if matching flats exist
-            if (!matchingFlats.isEmpty()) {
-                System.out.println("Matching flats exist in the database.");
-            } else {
-                System.out.println("No matching flats found in the database.");
-            }
-        } finally {
-            // Close the EntityManager and EntityManagerFactory
-            entityManager.close();
-            entityManagerFactory.close();
-        }
-    }
-}
-
- */
