@@ -1,18 +1,26 @@
 package org.goit.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class Flat {
+public class Flat implements MarkEntities{
+
+    @Transient
+    private final static String sqlQuery = "SELECT f FROM Flat f";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
 
@@ -28,7 +36,7 @@ public class Flat {
     @Column(name = "num_of_rooms")
     private int numOfRooms;
 
-    @OneToMany(mappedBy = "residentialFlat", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "residentialFlat", cascade = CascadeType.DETACH)
     List<Person> persons;
 
     @OneToMany(mappedBy = "flat", cascade = CascadeType.REMOVE)
@@ -44,5 +52,38 @@ public class Flat {
                 ", floor=" + floor +
                 ", numOfRooms=" + numOfRooms +
                 '}';
+    }
+
+    @Override
+    public String getSqlQuery(){
+        return sqlQuery;
+    }
+
+    @Override
+    public void clone(MarkEntities entity) {
+        Flat flat = (Flat) entity;
+        building = flat.getBuilding();
+        apartmentNumber = flat.apartmentNumber;
+        area = flat.getArea();
+        floor = flat.getFloor();
+        numOfRooms = flat.numOfRooms;
+    }
+
+    @Override
+    public Flat findById(EntityManager manager, int id) {
+        return manager.find(Flat.class, id);
+    }
+
+    @Override
+    public void delete(EntityManager manager, int id) {
+        Flat flatToRemove = findById(manager, id);
+        List<Person> persons = flatToRemove.getPersons();
+        for (Person person : persons) {
+            person.setResidentialFlat(null);
+        }
+        EntityTransaction transaction = manager.getTransaction();
+        transaction.begin();
+        manager.remove(flatToRemove);
+        transaction.commit();
     }
 }

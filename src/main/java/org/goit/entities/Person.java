@@ -11,7 +11,9 @@ import java.util.List;
 
 @Data
 @Entity
-public class Person {
+public class Person implements MarkEntities{
+    @Transient
+    private static final String sqlQuery = "SELECT p FROM Person p";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -27,23 +29,58 @@ public class Person {
 
     @Column(name = "parking_right")
     private int parkingRight;
+    @ManyToOne
+    @JoinColumn(name = "residential_flat", referencedColumnName = "id")
+    private Flat residentialFlat;
 
     @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
     private List<Ownership> ownerships;
 
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "residential_flat", referencedColumnName = "id")
-    private Flat residentialFlat;
+
+    @Override
+    public String getSqlQuery(){
+        return sqlQuery;
+    }
+
+
+    @Override
+    public void clone(MarkEntities entity) {
+       Person personToClone = (Person) entity;
+       name = personToClone.getName();
+       email = personToClone.getEmail();
+       phone = personToClone.getPhone();
+       parkingRight = personToClone.getParkingRight();
+       residentialFlat = personToClone.getResidentialFlat();
+    }
+
+    @Override
+    public Person findById(EntityManager manager, int id) {
+        return manager.find(Person.class, id);
+    }
+
+    @Override
+    public void delete(EntityManager manager, int id) {
+        Person personToRemove = findById(manager, id);
+        EntityTransaction transaction = manager.getTransaction();
+        transaction.begin();
+        manager.remove(personToRemove);
+        transaction.commit();
+    }
 
     @Override
     public String toString() {
-        return "Person{" +
-                "id=" + id +
+        String flatId = this.residentialFlat == null ? null : String.valueOf(residentialFlat.getId());
+        String address = this.residentialFlat == null ? "not resident" : residentialFlat.getBuilding().getAddress();
+        String area = this.residentialFlat == null ? null : String.valueOf(residentialFlat.getArea());
+        return "Person{" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", address= " + address +
+                ", flat # " + flatId +
+                ", area " + area +
                 ", parkingRight=" + parkingRight +
-                ", residentialFlatId=" + residentialFlat.getId() +
+                ", residentialFlatId=" + flatId +
                 '}';
     }
 }
